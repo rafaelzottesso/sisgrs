@@ -1,0 +1,19 @@
+{% autoescape off %}
+Olá,
+
+A Empresa {{ razao_social }} com o CNPJ {{ cnpj }} foi cadastrada com seu email no Sistema de Gerenciamento de Resíduos Sólidos (SisGRS).
+
+Utilize os seguintes dados para acessar o sistema:
+Usuário: {{usuario}} (seu CNPJ sem pontos e traços)
+Senha: {{senha}}
+
+Endereço: http://{{ dominio }}{% url 'index' %}
+
+Qualquer dúvida, entre em contato conosco por telefone ou diretamente na prefeitura.
+
+Atenciosamente,
+Equipe SisGRS
+{{ prefeitura_nome }}
+{{ prefeitura_fone }}
+{{ prefeitura_endereco }}
+{% endautoescape %}

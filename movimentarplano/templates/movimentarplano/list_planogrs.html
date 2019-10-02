@@ -1,0 +1,220 @@
+{% extends 'planogrs/base.html' %}
+
+{% load static %}
+{% load crispy_forms_tags %}
+{% load my_filters %}
+
+<!-- Bloco destinado aos scripts para cada página -->
+{% block styles %}
+<link rel="stylesheet" href="{% static 'vendor/datatables/css/dataTables.bootstrap4.min.css' %}">
+<link rel="stylesheet" href="{% static 'vendor/datatables/css/fixedHeader.bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'vendor/datatables/css/responsive.bootstrap.min.css' %}">
+{% endblock %}
+
+<!-- Bloco de conteúdo -->
+{% block conteudo %}
+<div class="container-fluid py-5 px-3">
+
+    <h3 class="border-bottom px-3 pb-2 mb-3 text-center">
+        {{titulo}}
+    </h3>
+
+    {% if mostrar_form %}
+    <div class="row mt-3 mb-4 mx-auto p-4">
+        <div class="container">
+
+            <div class="col-md">
+                <h5 class="pb-2 text-center">Aplicar filtro de consulta</h5>
+
+                <form action="" method="GET" id="form-pesquisar">
+
+                    <div class="form-row">
+
+                        <div class="col-md my-1">
+                            <input type="text" class="form-control" id="q" name="q" value="{{q}}" required
+                                placeholder="Pesquisar por...">
+                        </div>
+
+                        <div class="col-md-4 my-1">
+                            <select class="form-control" id="buscar_por" name="buscar_por">
+                                <option value="cnpj" {% if buscar_por == 'cnpj' %}selected{% endif %}>CNPJ</option>
+                                <option value="razao_social" {% if buscar_por == 'razao_social' %}selected{% endif %}>
+                                    Razão
+                                    Social</option>
+                                <option value="nome_fantasia" {% if buscar_por == 'nome_fantasia' %}selected{% endif %}>
+                                    Nome
+                                    Fantasia</option>
+                                <option value="telefone_comercial"
+                                    {% if buscar_por == 'telefone_comercial' %}selected{% endif %}>Telefone Comercial
+                                </option>
+                                <option value="telefone_celular"
+                                    {% if buscar_por == 'telefone_celular' %}selected{% endif %}>
+                                    Telefone Celular</option>
+                                <option value="email" {% if buscar_por == 'email' %}selected{% endif %}>Email</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-3 my-1">
+                            <button type="submit" class="btn btn-outline-primary">
+                                <i class="fa fa-search" aria-hidden="true"></i>
+                                Pesquisar
+                            </button>
+                            <a href="{% url 'listar-planogrs' %}" class="btn btn-outline-secondary">
+                                <i class="fa fa-refresh" aria-hidden="true"></i>
+                                Limpar
+                            </a>
+                        </div>
+
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if empresas %}
+    <div class="row my-3">
+        <div class="col-md">
+
+            {% if mostrar_form %}
+            <h3 class="border-bottom border-top bg-light px-3 py-2 mb-3 text-center">
+                Empresas encontradas
+            </h3>
+            {% endif %}
+
+            <div class="table-responsive-md">
+
+                <table class="table table-striped nowrap" style="width:100%" id="tabela-listar">
+
+                    <thead>
+                        <tr>
+                            <!-- Alterar o título das colunas -->
+                            <th>CNPJ</th>
+                            <th>Razão Social</th>
+                            <!-- <th>Nome Fantasia</th> -->
+                            <th>Situação Atual</th>
+                            <th>Data de Modificação</th>
+                            <th>Modificado por</th>
+                            <th class="text-center">Ver</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for empresa in empresas  %}
+                        <tr>
+
+                            <!-- Alterar os campos -->
+                            <td>{{ empresa.cnpj }}</td>
+                            <td>{{ empresa.razao_social }}</td>
+                            <!-- <td>{{ empresa.nome_fantasia }}</td> -->
+
+                            {% with situacao=situacao_atual|getDict:empresa.user.pk %}
+                            <td>{{ situacao.tipo_situacao }}</td>
+                            <td>{{ situacao.data_movimentacao|date:"d/m/Y H:i" }}</td>
+                            <td>{{ situacao.movimentado_por|formatarUsuario }}</td>
+                            {% endwith %}
+
+                            <td class="text-center">
+                                <a href="{% url 'visualizar-plano-fiscal' empresa.user.pk %}"
+                                    class="btn btn-info btn-sm" title="Editar">
+                                    <i class="fa fa-search-plus" aria-hidden="true"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+    </div>
+    {% else %}
+    <div class="row my-3">
+        <div class="col-md">
+
+            {% if q and buscar_por %}
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                Nenhuma empresa localizada com com os parâmetros informados acima.
+            </div>
+
+            <script>
+                $(".alert").alert();
+            </script>
+            {% elif busca_situacao %}
+            <div class="alert alert-warning">
+                Nenhuma empresa encontrada com a Situação Atual: <b>{{busca_situacao}}</b>.
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+    {% endif %}
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="modal-excluir" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Verificação de exclusão</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="modal-text-registro"></div>
+                    <br>
+                    <p>
+                        <b>Deseja ir para a página de exclusão?</b>
+                    </p>
+                    <small class="text-muted">Obs: O registro ainda não será excluído após esta confirmação.</small>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn " data-dismiss="modal">Cancelar</button>
+                    <a href="#" class="btn btn-danger" id="btn-excluir-sim">Sim, continuar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+</div>
+{% endblock %}
+
+
+<!-- Bloco destinado aos scripts para cada página -->
+{% block scripts %}
+<script src="{% static 'vendor/datatables/js/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'vendor/datatables/js/dataTables.bootstrap4.min.js' %}"></script>
+
+<script src="{% static 'vendor/datatables/js/dataTables.fixedHeader.min.js' %}"></script>
+<script src="{% static 'vendor/datatables/js/dataTables.responsive.min.js' %}"></script>
+<script src="{% static 'vendor/datatables/js/responsive.bootstrap.min.js' %}"></script>
+
+<script src="{% static 'js/dataTables_ptbr.js' %}"></script>
+
+<script>
+    $(document).ready(function () {
+
+        $(".btn-excluir").click(function () {
+            $("#btn-excluir-sim").attr('href', $(this).attr('link'));
+            $("#modal-text-registro").text($(this).closest("tr").text());
+
+        });
+
+        $('#modal-excluir').on('hidden.bs.modal', function () {
+            $("#btn-excluir-sim").attr('href', "#");
+            $("#modal-text-registro").text('');
+        });
+
+    });
+</script>
+{% endblock %}

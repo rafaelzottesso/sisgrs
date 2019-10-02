@@ -1,0 +1,508 @@
+{% load static %}
+
+{% load my_filters %}
+
+<!doctype html>
+<html lang="pt-br" class="h-100">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Sistema de Gerenciamento de Movimentação e Planos de Resíduos Sólidos">
+    <meta name="author" content="Rafael Zottesso, Cristhian Maia">
+
+    <title>:: SisGRS :: Prefeitura Municipal de Paranavaí</title>
+
+    <!-- Importação do Bootstrap 4 e do Font awesome -->
+    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'vendor/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet">
+
+    <!-- CSS adicional -->
+    <link href="{% static 'css/prefeitura-pvai.css' %}" rel="stylesheet">
+
+    <!-- Ícone na barra de abas -->
+    <link rel="shortcut icon" href="{% static 'img/favicon.png' %}">
+
+    <!-- Bloco destinado aos estilos para cada página -->
+    {% block styles %}
+
+    {% endblock %}
+
+</head>
+
+<body class="d-flex flex-column h-100">
+    <main role="main" class="flex-shrink-0">
+
+
+        <!-- Bloco com a logo da cidade -->
+        {% block logo %}
+        <div class="container-fluid text-center bg-cidade">
+            <div class="container border-bottom border-light">
+                <img src="{% static 'img/logo_cidade.png' %}" alt="" class="img-fluid">
+            </div>
+
+        </div>
+        {% endblock %}
+
+
+        <!-- Bloco com o menu principal -->
+        {% block menu %}
+        <nav class="navbar navbar-expand-lg navbar-dark bg-cidade font-weight-bold">
+
+            <div class="container">
+                <a class="navbar-brand" href="#">SISGRS</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
+                    aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                    <ul class="navbar-nav mr-auto">
+
+                        {% if request.user.is_authenticated %}
+                        <li class="nav-item active">
+                            <a class="nav-link" href="{% url 'index-auth' %}"><i class="fa fa-home"
+                                    aria-hidden="true"></i>
+                                Início</a>
+                        </li>
+
+                        {% if request.user|has_group:"Empresa" %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownMenuLink"
+                                role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fa fa-plus-square" aria-hidden="true"></i>
+                                Cadastros
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                <a class="dropdown-item" href="{% url 'listar-empresa' %}">
+                                    <i class="fa fa-building-o" aria-hidden="true"></i>
+                                    Empresa</a>
+                                <a class="dropdown-item" href="{% url 'listar-responsaveljuridico' %}">
+                                    <i class="fa fa-user-o" aria-hidden="true"></i>
+                                    Responsável Jurídico</a>
+                                <a class="dropdown-item" href="{% url 'listar-setor' %}">
+                                    <i class="fa fa-folder-o" aria-hidden="true"></i>
+                                    Setor</a>
+                                <a class="dropdown-item" href="{% url 'listar-residuossetor' %}">
+                                    <i class="fa fa-trash-o" aria-hidden="true"></i>
+                                    Resíduos</a>
+                            </div>
+                        </li>
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownMenuLink"
+                                role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fa fa-file-text" aria-hidden="true"></i>
+                                Plano GRS
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                <a class="dropdown-item" href="{% url 'visualizar-plano' %}">
+                                    <i class="fa fa-search" aria-hidden="true"></i>
+                                    Visualizar Plano GRS</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="{% url 'listar-situacao' %}">
+                                    <i class="fa fa-refresh" aria-hidden="true"></i>
+                                    Histórico de Movimentações</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="{% url 'imprimir-plano' %}" target="_blank">
+                                    <i class="fa fa-print" aria-hidden="true"></i>
+                                    Imprimir Plano GRS</a>
+                                <a class="dropdown-item" href="{% url 'imprimir-declaracao-plano' %}" target="_blank">
+                                    <i class="fa fa-print" aria-hidden="true"></i>
+                                    Imprimir Declaração</a>
+                                <!-- <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="{% url 'submeter-plano' %}">Submeter Plano GRS</a> -->
+                                <!-- <a class="dropdown-item" href="#">Something else here</a> -->
+                            </div>
+                        </li>
+                        {% endif %}
+
+                        {% if request.user|has_group:"Fiscal" %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownMenuLink"
+                                role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fa fa-cog" aria-hidden="true"></i>
+                                Cadastrar
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                <a class="dropdown-item" href="{% url 'credenciar-empresa' %}">
+                                    <i class="fa fa-building-o" aria-hidden="true"></i>
+                                    Empresa</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="{% url 'cadastrar-prestadorservico' %}">
+                                    <i class="fa fa-user-o" aria-hidden="true"></i>
+                                    Prestador de Seriviço</a>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownMenuLink"
+                                role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fa fa-search" aria-hidden="true"></i>
+                                Consultar
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                <a class="dropdown-item" href="{% url 'listar-empresa' %}">
+                                    <i class="fa fa-building-o" aria-hidden="true"></i>
+                                    Empresas</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="{% url 'listar-prestadorservico' %}">
+                                    <i class="fa fa-users" aria-hidden="true"></i>
+                                    Prestadores de Seriviço</a>
+                                <div class="dropdown-divider"></div>
+
+                                <a class="dropdown-item disabled" href="#">Planos GRS</a>
+                                <a class="dropdown-item" href="{% url 'listar-planogrs-pendente' %}">
+                                    <i class="fa fa-hourglass-o" aria-hidden="true"></i>
+                                    Pendentes</a>
+                                <a class="dropdown-item" href="{% url 'listar-planogrs-emanalise' %}">
+                                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                                    Em análise</a>
+                                <a class="dropdown-item" href="{% url 'listar-planogrs' %}">
+                                    <i class="fa fa-bars" aria-hidden="true"></i>
+                                    Todos</a>
+                            </div>
+                        </li>
+                        {% endif %}
+
+
+                        {% if request.user|has_group:"Prefeitura" or request.user.is_superuser %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownMenuLink"
+                                role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fa fa-cog" aria-hidden="true"></i>
+                                Cadastrar
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                <a class="dropdown-item" href="{% url 'cadastrar-fiscal' %}">Usuário Fiscal</a>
+                                <a class="dropdown-item" href="{% url 'credenciar-empresa' %}">
+                                    Empresa</a>
+                                <a class="dropdown-item" href="{% url 'cadastrar-prestadorservico' %}">Prestador de
+                                    Seriviço</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="{% url 'cadastrar-cnae' %}">CNAE</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="{% url 'cadastrar-classe' %}">Classe</a>
+                                <a class="dropdown-item" href="{% url 'cadastrar-residuo' %}">Resíduo</a>
+                                <a class="dropdown-item" href="{% url 'cadastrar-tiporesiduo' %}">Tipo de Resíduo</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="{% url 'cadastrar-armazenamento' %}">Armazenamento</a>
+                                <a class="dropdown-item" href="{% url 'cadastrar-destinacaofinal' %}">Destinação
+                                    Final</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="{% url 'cadastrar-tipochamado' %}">Tipo Chamados</a>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownMenuLink"
+                                role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fa fa-search" aria-hidden="true"></i>
+                                Consultar
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                <a class="dropdown-item" href="{% url 'listar-fiscal' %}">Usuários Fiscais</a>
+                                <a class="dropdown-item" href="{% url 'listar-empresa' %}">Empresas</a>
+                                <a class="dropdown-item" href="{% url 'listar-prestadorservico' %}">Prestador de
+                                    Seriviço</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="{% url 'listar-cnae' %}">CNAE</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="{% url 'listar-classe' %}">Classe</a>
+                                <a class="dropdown-item" href="{% url 'listar-residuo' %}">Resíduo</a>
+                                <a class="dropdown-item" href="{% url 'listar-tiporesiduo' %}">Tipo de Resíduo</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="{% url 'listar-armazenamento' %}">Armazenamento</a>
+                                <a class="dropdown-item" href="{% url 'listar-destinacaofinal' %}">Destinação Final</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="{% url 'listar-tipochamado' %}">Tipo Chamados</a>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownMenuLink"
+                                role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fa fa-file-text-o" aria-hidden="true"></i>
+                                Planos GRS
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                <a class="dropdown-item" href="{% url 'listar-planogrs-pendente' %}">
+                                    <i class="fa fa-hourglass-o" aria-hidden="true"></i>
+                                    Pendentes</a>
+                                <a class="dropdown-item" href="{% url 'listar-planogrs-emanalise' %}">
+                                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                                    Em análise</a>
+                                <a class="dropdown-item" href="{% url 'listar-planogrs' %}">
+                                    <i class="fa fa-bars" aria-hidden="true"></i>
+                                    Todos</a>
+
+                            </div>
+                        </li>
+
+                        {% endif %}
+
+                        <!-- Não autenticado -->
+                        {% else %}
+                        <li class="nav-item active">
+                            <a class="nav-link" href="{% url 'index' %}"><i class="fa fa-home" aria-hidden="true"></i>
+                                Início</a>
+                        </li>
+                        {% endif %}
+
+                        <li class="nav-item active">
+                            <a class="nav-link" href="{% url 'sobre' %}">
+                                <i class="fa fa-info-circle" aria-hidden="true"></i>
+                                 Sobre
+                            </a>
+                        </li>
+                        <li class="nav-item active">
+                            <a class="nav-link" href="{% url 'ajuda' %}">
+                                <i class="fa fa-question-circle" aria-hidden="true"></i>
+                                 Ajuda
+                            </a>
+                        </li>
+                    </ul>
+
+                    <ul class="navbar-nav">
+
+                        {% if request.user.is_authenticated %}
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownMenuLink" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fa fa-headphones" aria-hidden="true"></i>
+                                Chamados
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                <a class="dropdown-item" href="{% url 'cadastrar-chamado' %}">
+                                    <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                                    Abrir novo</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="{% url 'listar-chamados-abertos' %}">
+                                    <i class="fa fa-hourglass-o" aria-hidden="true"></i>
+                                    Listar chamados abertos</a>
+                                <a class="dropdown-item" href="{% url 'listar-chamado' %}">
+                                    <i class="fa fa-bars" aria-hidden="true"></i>
+                                    Listar todos</a>
+                            </div>
+                        </li>
+
+                        
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownMenuLink" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fa fa-user-circle" aria-hidden="true"></i>
+                                <span id="username">{{ request.user.username }}</span>
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                <a class="dropdown-item" href="{% url 'user-alterar-dados' %}">
+                                    <i class="fa fa-envelope-o" aria-hidden="true"></i>
+                                    Email de recuperação de senha</a>
+                                <a class="dropdown-item" href="{% url 'user-alterar-senha' %}">
+                                    <i class="fa fa-lock" aria-hidden="true"></i>
+                                    Alterar senha</a>
+                        
+                                {% if request.user.is_superuser %}
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" target="_blank" href="/admin">
+                                    <i class="fa fa-cogs" aria-hidden="true"></i>
+                                    Admin Django</a>
+                                {% endif %}
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="{% url 'logout' %}">
+                                    <i class="fa fa-sign-out" aria-hidden="true"></i>
+                                    Sair</a>
+                            </div>
+                        </li>
+
+                        {% else %}
+                        <li class="nav-item active">
+                            <a class="nav-link" href="{% url 'login' %}">
+                                <i class="fa fa-sign-in" aria-hidden="true"></i>
+                                Entrar</a>
+                        </li>
+
+                        {% endif %}
+                    </ul>
+                </div>
+
+                <!-- fim do container -->
+            </div>
+        </nav>
+        {% endblock %}
+
+
+        <!-- Bloco de conteúdo -->
+        {% block conteudo %}
+        <div class="container pt-5 pb-3">
+
+            {% if request.user.is_authenticated %}
+            <meta http-equiv="refresh" content="5; url={% url 'index-auth' %}">
+
+            <div class="text-center">
+
+                <h2 class="text-warning">
+                    <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+                    Você está autenticado!
+                </h2>
+
+                <img src="{% static 'img/loading.gif' %}" alt="" class="img-fluid">
+
+                <h5 class="text-dark">
+                    Redirecionando para a página inicial em 5 segundos...
+                </h5>
+            </div>
+            {% else %}
+            <h1 class="">Sticky footer with fixed navbar</h1>
+            <p class="lead">Pin a footer to the bottom of the viewport in desktop browsers with this custom HTML and
+                CSS. A fixed navbar has been added with <code>padding-top: 60px;</code> on the
+                <code>main &gt; .container</code>.
+            </p>
+            {% endif %}
+
+        </div>
+        {% endblock %}
+
+    </main>
+
+    <footer class="mt-auto">
+
+        <!-- Links Rápidos para o sistema -->
+        {% block links %}
+
+        {% if request.user.is_authenticated %}
+        <div class="container-fluid bg-light p-3 links-rapidos">
+            <div class="container">
+
+                <h3>Links Rápidos</h3>
+                <hr>
+                <div class="text-center">
+
+                    {% if request.user|has_group:"Empresa" %}
+                    <a href="{% url 'alterar-empresa' pk=request.user.empresa.pk %}"
+                        class="btn btn-outline-dark m-1">
+                        <i class="fa fa-building-o" aria-hidden="true"></i>
+                        Atualizar dados da Empresa
+                    </a>
+                    <a href="{% url 'cadastrar-responsaveljuridico' %}" class="btn btn-outline-dark m-1">
+                        <i class="fa fa-user-o" aria-hidden="true"></i>
+                        Responsável Jurídico
+                    </a>
+                    <a href="{% url 'cadastrar-setor' %}" class="btn btn-outline-dark m-1">
+                        <i class="fa fa-folder-o" aria-hidden="true"></i>
+                        Cadastrar Setor
+                    </a>
+                    <a href="{% url 'cadastrar-residuossetor' %}" class="btn btn-outline-dark m-1">
+                        <i class="fa fa-trash-o" aria-hidden="true"></i>
+                        Cadastrar Resíduo
+                    </a>
+                    <a href="{% url 'user-alterar-senha' %}" class="btn btn-outline-info m-1">
+                        <i class="fa fa-lock" aria-hidden="true"></i>
+                        Alterar senha
+                    </a>
+
+                    {% elif request.user|has_group:"Fiscal" or request.user|has_group:"Prefeitura" or request.user.is_superuser %}
+                    <a href="{% url 'credenciar-empresa' %}" class="btn btn-outline-primary m-1">
+                        <i class="fa fa-building-o" aria-hidden="true"></i>
+                        Credenciar nova Empresa
+                    </a>
+                    <a href="{% url 'cadastrar-prestadorservico' %}" class="btn btn-outline-primary m-1">
+                        <i class="fa fa-users" aria-hidden="true"></i>
+                        Cadastrar Prestador de Serviço
+                    </a>
+                    <a href="{% url 'listar-planogrs-pendente' %}" class="btn btn-outline-secondary m-1">
+                        <i class="fa fa-hourglass-o" aria-hidden="true"></i>
+                        Planos GRS "Pendentes"
+                    </a>
+                    <a href="{% url 'listar-planogrs-emanalise' %}" class="btn btn-outline-secondary m-1">
+                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                        Planos GRS "em Análise"
+                    </a>
+                    <a href="{% url 'listar-chamados-abertos' %}" class="btn btn-outline-success m-1">
+                        <i class="fa fa-headphones" aria-hidden="true"></i>
+                        Chamados
+                    </a>
+
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% endblock %}
+
+
+        <!-- Bloco acima do rodapé com links -->
+        {% block rodape-links %}
+        <div class="container-fluid bg-cidade text-white p-3">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm">
+                        <h5>O Município</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-white">Link 1</a></li>
+                            <li><a href="#" class="text-white">Link 2</a></li>
+                            <li><a href="#" class="text-white">Link 3</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-sm">
+                        <h5>Serviços</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-white">Link 1</a></li>
+                            <li><a href="#" class="text-white">Link 2</a></li>
+                            <li><a href="#" class="text-white">Link 3</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-sm">
+                        <h5>Acesso rápido</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-white">Link 1</a></li>
+                            <li><a href="#" class="text-white">Link 2</a></li>
+                            <li><a href="#" class="text-white">Link 3</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endblock %}
+
+
+        <!-- Rodapé -->
+        {% block rodape %}
+        <div class="container-fluid bg-light text-center p-3">
+            <span class="">Desenvolvido por Rafael Zottesso e Cristhian Maia. 2019.</span>
+        </div>
+        {% endblock %}
+
+    </footer>
+
+
+    <!-- Importação do JS -->
+    <script src="{% static 'vendor/jquery/jquery-3.4.1.min.js' %}"></script>
+    <script src="{% static 'vendor/popper/popper.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+    <script>
+    function cnpjMask(v) {
+        v = v.replace(/\D/g, "");                           //Remove tudo o que não é dígito
+        v = v.replace(/^(\d{2})(\d)/, "$1.$2");             //Coloca ponto entre o segundo e o terceiro dígitos
+        v = v.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3"); //Coloca ponto entre o quinto e o sexto dígitos
+        v = v.replace(/\.(\d{3})(\d)/, ".$1/$2");           //Coloca uma barra entre o oitavo e o nono dígitos
+        v = v.replace(/(\d{4})(\d)/, "$1-$2");              //Coloca um hífen depois do bloco de quatro dígitos
+        return v;
+    }
+    $(document).ready(function () {
+
+        var cnpj = $("#username").text();
+
+        if (!isNaN(cnpj) && cnpj != "") {
+            cnpj = cnpjMask(cnpj);
+            $('#username').text(cnpj);
+        }
+
+    });
+    </script>
+
+    <!-- Bloco destinado aos scripts para cada página -->
+    {% block scripts %}
+
+    {% endblock %}
+
+</body>
+
+</html>

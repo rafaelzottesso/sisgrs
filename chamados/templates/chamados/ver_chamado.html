@@ -1,0 +1,160 @@
+{% extends 'planogrs/base.html' %}
+
+{% load static %}
+{% load crispy_forms_tags %}
+{% load my_filters %}
+
+
+<!-- Bloco de conteúdo -->
+{% block conteudo %}
+<div class="container py-5">
+
+    <h2 class="border-bottom">
+        Chamado: <b>#{{ object.pk }}</b> {{ object.assunto }}
+    </h2>
+
+
+    <div class="row bg-light shadow-sm border my-4 p-4">
+        <div class="col-md">
+
+            <div class="row my-2">
+                <div class="col-md-2 font-weight-bold">
+                    Aberto por:
+                </div>
+                <div class="col-md">
+                    {{ object.aberto_por|formatarUsuario }}
+                </div>
+            </div>
+
+            <div class="row my-2">
+                <div class="col-md-2 font-weight-bold">
+                    Aberto em:
+                </div>
+                <div class="col-md">
+                    {{ object.aberto_em }}
+                </div>
+            </div>
+
+            <div class="row my-2">
+                <div class="col-md-2 font-weight-bold">
+                    Tipo:
+                </div>
+                <div class="col-md">
+                    {{ object.tipo }}
+                </div>
+            </div>
+
+            <div class="row my-2">
+                <div class="col-md-2 font-weight-bold">
+                    Descrição:
+                </div>
+                <div class="col-md">
+                    {{ object.descricao }}
+                </div>
+            </div>
+
+            {% if object.fechado_em %}
+            <div class="row my-2">
+                <div class="col-md-2 font-weight-bold">
+                    Fechado em:
+                </div>
+                <div class="col-md">
+                    {{ object.fechado_em }}
+                    por
+                    {{ object.fechado_por|formatarUsuario }}
+                </div>
+            </div>
+            {% else %}
+            <div class="row my-2">
+                <div class="col-md-2 font-weight-bold">
+                    Status:
+                </div>
+                <div class="col-md">
+                    Aberto
+                </div>
+            </div>
+            {% endif %}
+
+        </div>       
+    </div>
+
+    {% for m in mensagens %}
+    <div class="row my-4 p-3 border">
+        <div class="col-md-3">
+            <b>
+                {{ m.user|formatarUsuario }}
+            </b>
+            <br>
+            {{ m.data }}
+        </div>       
+        <div class="col-md">
+            {{ m.mensagem }}
+        </div>       
+    </div>
+    {% empty %}
+
+    {% endfor %}
+
+    <div class="row my-4 p-3 border shadow-sm bg-light">
+        <div class="col-md text-center">
+
+            {% if not object.fechado_em %}
+            <!-- Se o chamado está aberto... -->
+            <a href="{% url 'cadastrar-mensagem' object.pk %}" class="btn btn-primary m-2">
+                <i class="fa fa-commenting" aria-hidden="true"></i>
+                Adicionar comentário
+            </a>
+
+            {% if request.user|has_group:"Empresa" %}
+            <!-- Se for da Empresa -->
+            <a href="{% url 'encerrar-chamado' object.pk %}" class="btn btn-danger m-2">
+                <i class="fa fa-times" aria-hidden="true"></i>
+                Encerrar chamado
+            </a>
+
+            {% else %}
+            <!-- Se for Fiscal ou Prefeitura -->
+
+            {% if object.tipo.descricao == 'Liberação de cadastros' %}
+            <!-- Se for um chamado para liberar os cadastros -->
+            <a href="{% url 'adequar-plano-por-chamado' object.pk object.aberto_por.pk  %}" class="btn btn-warning m-2">
+                <i class="fa fa-pencil" aria-hidden="true"></i>
+                Enviar Plano GRS para Adequação
+            </a>
+            {% endif %}
+
+            <a href="{% url 'comentar-encerrar-chamado' object.pk %}" class="btn btn-danger m-2">
+                <i class="fa fa-times" aria-hidden="true"></i>
+                Encerrar chamado
+            </a>
+            <!-- Fim se for Fiscal ou Prefeitura -->
+            {% endif %}
+
+            <!-- Fim se o chamado está aberto -->
+            {% endif %}
+
+            <a href="{% url 'listar-chamados-abertos' %}" class="btn btn-secondary m-2">
+                <i class="fa fa-undo" aria-hidden="true"></i>
+                Voltar
+            </a>
+
+        </div>
+    </div>
+
+
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script>
+    $(document).ready(function () {
+
+
+
+    });
+</script>
+
+{% endblock %}

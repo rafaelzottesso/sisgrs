@@ -1,0 +1,1 @@
+[{"model": "planogrs.tiporesiduo", "pk": 1, "fields": {"nome": "Materiais de sa\u00fade", "informacoes_complementares": "Materiais de sa\u00fade de modo geral"}}, {"model": "planogrs.tiporesiduo", "pk": 2, "fields": {"nome": "Entulho", "informacoes_complementares": "Materiais de constru\u00e7\u00e3o"}}]

@@ -1,0 +1,72 @@
+{% extends 'planogrs/base.html' %}
+
+{% load static %}
+{% load crispy_forms_tags %}
+
+
+
+<!-- Bloco de conteúdo -->
+{% block conteudo %}
+<div class="container py-5">
+
+    <h2 class="border-bottom">
+        {{ titulo }}
+    </h2>
+
+    {% if botao_submit == 'Excluir' %}
+    <p class="text-muted">* O registro será excluído após esta etapa.</p>
+    <div class="row">
+        <div class="col-md border-bottom border-top py-2 mt-3 mb-4">
+            <h5>Registro a excluir: <strong>{{object}}</strong></h5>
+        </div>
+    </div>
+    {% else %}
+    <p class="text-muted">* Preencha todos os campos obrigatórios.</p>
+    {% endif %}
+
+
+    <div class="row">
+        <div class="col-md">
+
+            <form method="post">
+                {% csrf_token %}
+
+                {{ form|crispy }}
+
+                <div class="">
+
+                    <button type="submit" class="btn {{ botao_submit_class }}">
+                        <i class="fa fa-check" aria-hidden="true"></i>
+                        {{ botao_submit }}
+                    </button>
+
+                    <a href="{% url urlcancelar %}" class="btn btn-secondary">
+                        <i class="fa fa-undo" aria-hidden="true"></i>
+                        Cancelar
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+
+
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script>
+    $(document).ready(function () {
+
+
+
+    });
+</script>
+
+{% endblock %}

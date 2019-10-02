@@ -1,0 +1,45 @@
+.bg-cidade {
+    background-color: #0064c9;
+}
+
+.text-cidade {
+    color: #0064c9;
+}
+
+.border-cidade {
+    border-color: #0064c9;
+}
+
+.font-75 {
+    font-size: 75%;
+}
+
+.font-115 {
+    font-size: 115%;
+}
+
+.font-125 {
+    font-size: 125%;
+}
+
+.font-150 {
+    font-size: 150%;
+}
+
+.font-175 {
+    font-size: 175%;
+}
+
+table.dataTable.dtr-inline.collapsed > tbody > tr[role="row"] > td:first-child::before,
+table.dataTable.dtr-inline.collapsed > tbody > tr[role="row"] > th:first-child::before {
+    top: 15px !important;
+}
+
+.links-rapidos .btn{
+    /* font-weight: bold; */
+}
+
+.alert dl, .alert ol, .alert ul {
+    margin-top: 0;
+    margin-bottom: 0;
+}

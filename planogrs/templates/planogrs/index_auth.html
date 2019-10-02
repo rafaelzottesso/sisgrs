@@ -1,0 +1,305 @@
+{% extends 'planogrs/base.html' %}
+
+{% load static %}
+{% load crispy_forms_tags %}
+{% load my_filters %}
+
+<!-- Bloco de conteúdo -->
+{% block conteudo %}
+<div class="container py-5">
+
+
+    {% if request.user.is_authenticated %}
+
+    {% if request.user.is_authenticated and request.user|has_group:"Empresa" %}
+
+    <div class="row mb-5 border shadow-sm p-4 bg-light">
+        <div class="col-md">
+            <h4 class="border-bottom pb-1">
+                Situação atual do Plano GRS:
+                {% if situacao_atual.tipo_situacao.nome %}
+                <span class="text-{{situacao_atual.tipo_situacao.cor}}">{{ situacao_atual.tipo_situacao.nome }}</span>
+                {% else %}
+                <span class="text-primary">Aguardando preenchimento</span>
+                {% endif %}
+                <span></span>
+            </h4>
+    
+            <div class="row">
+                <div class="col-md-2">
+                    <b>Movimentado em:</b>
+                </div>
+                <div class="col-md-4">
+                    {{ situacao_atual.data_movimentacao }}
+                </div>
+                <div class="col-md-1">
+                    <b>Usuário:</b>
+                </div>
+                <div class="col-md">
+                    {% if situacao_atual.movimentado_por.first_name %}
+                    {{ situacao_atual.movimentado_por.first_name }} (Cód. {{situacao_atual.movimentado_por.pk}})
+                    {% elif situacao_atual.movimentado_por.empresa %}
+                    {{ situacao_atual.movimentado_por.empresa.cnpj }}
+                    {% else %}
+                    {{ situacao_atual.movimentado_por }}
+                    {% endif %}
+                </div>
+            </div>
+    
+            <div class="row">
+                <div class="col-md-2">
+                    <b>Informações complementares:</b>
+                </div>
+                <div class="col-md">
+                    {{ situacao_atual.informacoes_complementares }}
+                </div>
+            </div>
+    
+            {% if situacao_atual.tipo_situacao.nome != "Em adequação" and situacao_atual.tipo_situacao.nome != "Andamento inicial" %}
+            <div class="alert alert-warning mb-0 mt-3">
+                <b>Atenção!</b>
+                Você não pode inserir ou alterar seus cadastros porque seu Plano GRS está
+                <b>{{situacao_atual.tipo_situacao.nome}}</b>!
+            </div>
+            {% endif %}
+    
+        </div>
+    </div>
+    <!-- ---------------------------------------------------------------------- -->
+
+    <div class="row">
+
+        <div class="col-md">
+            <h4 class="border-bottom pb-1">
+                Dados cadastrais
+            </h4>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <b>Cadastros:</b>
+                </div>
+                <div class="col-md">
+                    {% if request.user.empresa.nome_fantasia %}
+                    <span class="badge badge-success">
+                        ok
+                    </span>
+                    {% else %}
+                    <span class="badge badge-danger">
+                        incompletos
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-md-4">
+                    <b>CNPJ:</b>
+                </div>
+                <div class="col-md">
+                    {{ request.user.empresa.cnpj }}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <b>Razão Social:</b>
+                </div>
+                <div class="col-md">
+                    {{ request.user.empresa.razao_social }}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <b>Nome Fantasia:</b>
+                </div>
+                <div class="col-md">
+                    {{ request.user.empresa.nome_fantasia }}
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-md-4">
+                    <b>Resp. Jurídicos:</b>
+                </div>
+                <div class="col-md">
+                    {% if responsaveis > 0 %}
+                    <span class="badge badge-success">
+                    {% else %}
+                    <span class="badge badge-warning">
+                    {% endif %}
+                        {{ responsaveis }}
+                    </span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <b>Setores:</b>
+                </div>
+                <div class="col-md">
+                    {% if setores > 0 %}
+                    <span class="badge badge-success">
+                    {% else %}
+                    <span class="badge badge-warning">
+                    {% endif %}
+                        {{ setores }}
+                    </span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <b>Resíduos:</b>
+                </div>
+                <div class="col-md">
+                    {% if residuos > 0 %}
+                    <span class="badge badge-success">
+                        {{ residuos }}
+                    </span>
+                    {% else %}
+                    <span class="badge badge-warning">
+                        {{ residuos }}
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+        <!-- ---------------------------------------------------------------------- -->
+
+        <div class="col-md">
+
+            <h4 class="border-bottom pb-1">
+                Sugestões
+            </h4>
+
+            <div class="">
+                <a href="{% url 'alterar-empresa' request.user.empresa.pk %}" class="m-2 d-block">
+                    1. Completar o cadastro da sua Empresa
+    
+                </a>
+            </div>
+            
+            <div class="">
+                <a href="{% url 'listar-responsaveljuridico' %}" class="m-2 d-block">
+                    2. Cadastrar os Responsáveis Jurídicos da Empresa
+                </a>
+            </div>
+
+            <div class="">
+                <a href="{% url 'listar-setor' %}" class="m-2 d-block">
+                    3. Cadastrar os Setores da Empresa
+                </a>
+            </div>
+
+            <div class="">
+                <a href="{% url 'listar-residuossetor' %}" class="m-2 d-block">
+                    4. Cadastrar resíduos que serão descartados
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+    <!-- fim da linha -->
+
+
+
+
+    {% elif request.user|has_group:"Prefeitura" or request.user|has_group:"Fiscal" %}
+    <!-- ----------------------------------------------------------------------------- -->
+    <div class="row">
+        <div class="col-md mb-4">
+            <h4 class="border-bottom pb-1">
+                Meus dados
+            </h4>
+
+            <div>
+                <b>Nome:</b>
+                {{request.user.first_name}} {{request.user.last_name}}
+            </div>
+
+            <br>
+
+            <div>
+                <b>Usuário:</b>
+                {{request.user.username}}
+            </div>
+
+            <div>
+                <b>Email:</b>
+                {{request.user.email}}
+            </div>
+
+            <div>
+                <b>Pertence ao grupo:</b>
+                {{ user.groups.all.0 }}
+            </div>
+            <br>
+            <div>
+                <b>Último login:</b>
+                {{request.user.last_login|date:"d/m/Y à\s H:i"}}
+            </div>
+
+            <div>
+                <b>Cadastrado em:</b>
+                {{request.user.date_joined|date:"d/m/Y à\s H:i"}}
+            </div>
+
+            <div class="text-muted font-75">
+                * <i>Mantenha seus dados atualizados.</i>
+            </div>
+
+        </div>
+
+        <div class="col-md">
+            <!-- <h4 class="border-bottom pb-1">
+                Planos GRS
+            </h4>
+
+            <div class="my-2">
+                <b>Pendentes:</b>
+                <span class="badge badge-danger">{{pendentes}}</span>
+            </div>
+
+            <div class="my-2">
+                <b>Em Análise:</b>
+                <span class="badge badge-warning">{{emanalise}}</span>
+            </div> -->
+
+            <h4 class="border-bottom pb-1">
+                Chamados
+            </h4>
+
+            <div class="my-2">
+                <b>Abertos:</b>
+                <span class="badge badge-success">{{chamados}}</span>
+                <br>
+                <a href="{% url 'listar-chamados-abertos' %}" class="d-block my-2">
+                    <i class="fa fa-search" aria-hidden="true"></i>
+                    Ver chamados abertos
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+    {% endif %}
+
+
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+
+<script>
+    $(document).ready(function () {
+
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,594 @@
+{% extends 'planogrs/base.html' %}
+
+
+{% load static %}
+{% load my_filters %}
+
+<!-- Bloco destinado aos scripts para cada página -->
+{% block styles %}
+
+{% endblock %}
+
+<!-- Bloco de conteúdo -->
+{% block conteudo %}
+<div class="container py-5">
+
+    <h2 class="border-bottom px-3 pb-2 mb-5">
+        {{titulo}}
+    </h2>
+
+
+    <!-- ======================================================================================= -->
+
+
+    <h4 class="border-bottom border-top p-1 text-center bg-light">Dados da Empresa</h4>
+
+    <div class="row">
+        <div class="col-md-2 font-weight-bold">
+            CNPJ:
+        </div>
+        <div class="col-md">
+            {{empresa.cnpj}}
+        </div>
+    </div>
+
+
+    <div class="row my-1">
+        <div class="col-md-2 font-weight-bold">
+            Razão Social:
+        </div>
+        <div class="col-md">
+            {{empresa.razao_social}}
+        </div>
+
+        <div class="col-md-2 font-weight-bold">
+            Nome Fantasia:
+        </div>
+        <div class="col-md">
+            {{empresa.nome_fantasia|default_if_none:''}}
+        </div>
+    </div>
+
+
+    <div class="row my-1">
+        <div class="col-md-2 font-weight-bold">
+            CNAE:
+        </div>
+        <div class="col-md">
+            {{empresa.cnae|default_if_none:''}}
+        </div>
+
+        <div class="col-md-2 font-weight-bold">
+            Atividade Específica:
+        </div>
+        <div class="col-md">
+            {{empresa.atividade_especifica|default_if_none:''}}
+        </div>
+    </div>
+
+
+    <div class="row my-1">
+        <div class="col-md-2 font-weight-bold">
+            Inscrição Estadual:
+        </div>
+        <div class="col-md">
+            {{empresa.inscricao_estadual|default_if_none:''}}
+        </div>
+
+        <div class="col-md-2 font-weight-bold">
+            Cadastro Imobiliário:
+        </div>
+        <div class="col-md">
+            {{empresa.cadastro_imobiliario}}
+        </div>
+    </div>
+
+
+    <div class="row my-1">
+        <div class="col-md-2 font-weight-bold">
+            CEP:
+        </div>
+        <div class="col-md-2">
+            {{empresa.cep}}
+        </div>
+
+        <div class="col-md-1 font-weight-bold">
+            Endereço:
+        </div>
+        <div class="col-md">
+            {{empresa.endereco}}
+        </div>
+    </div>
+
+    <div class="row my-1">
+        <div class="col-md-2 font-weight-bold">
+            Bairro:
+        </div>
+        <div class="col-md-2">
+            {{empresa.bairro}}
+        </div>
+
+        <div class="col-md-1 font-weight-bold">
+            Número:
+        </div>
+        <div class="col-md-1">
+            {{empresa.numero}}
+        </div>
+
+        <div class="col-md-2 font-weight-bold">
+            Complemento:
+        </div>
+        <div class="col-md">
+            {{empresa.complemento|default_if_none:''}}
+        </div>
+    </div>
+
+
+    <div class="row my-1">
+        <div class="col-md-2 font-weight-bold">
+            Telefone Comercial:
+        </div>
+        <div class="col-md">
+            {{empresa.telefone_comercial}}
+        </div>
+
+        <div class="col-md-2 font-weight-bold">
+            Telefone Celular:
+        </div>
+        <div class="col-md">
+            {{empresa.telefone_celular}}
+        </div>
+    </div>
+
+
+    <div class="row my-1">
+        <div class="col-md-2 font-weight-bold">
+            Email:
+        </div>
+        <div class="col-md">
+            {{empresa.email}}
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="row my-1">
+        <div class="col-md-2 font-weight-bold">
+            Responsável Técnico:
+        </div>
+        <div class="col-md">
+            {{empresa.nome_tecnico}}
+        </div>
+
+        <div class="col-md-2 font-weight-bold">
+            Conselho nº:
+        </div>
+        <div class="col-md">
+            {{empresa.conselho_numero_tecnico}}
+        </div>
+    </div>
+
+    <div class="row my-1">
+        <div class="col-md-2 font-weight-bold">
+            RG:
+        </div>
+        <div class="col-md">
+            {{empresa.rg_tecnico}}
+        </div>
+
+        <div class="col-md-2 font-weight-bold">
+            CPF:
+        </div>
+        <div class="col-md">
+            {{empresa.cpf_tecnico}}
+        </div>
+    </div>
+
+    <div class="row my-1">
+        <div class="col-md-2 font-weight-bold">
+            Telefone:
+        </div>
+        <div class="col-md">
+            {{empresa.telefone_tecnico}}
+        </div>
+
+        <div class="col-md-2 font-weight-bold">
+            Email:
+        </div>
+        <div class="col-md">
+            {{empresa.email_tecnico}}
+        </div>
+    </div>
+
+    <div class="row my-1">
+        <div class="col-md-2 font-weight-bold">
+            ART Nº:
+        </div>
+        <div class="col-md">
+            {{empresa.art_num}}
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="row my-1">
+        <div class="col-md-2 font-weight-bold">
+            Licença IAP:
+        </div>
+        <div class="col-md">
+            {{empresa.get_licenca_iap_display}}
+        </div>
+
+        <div class="col-md-2 font-weight-bold">
+            Nº da Licença:
+        </div>
+        <div class="col-md">
+            {{empresa.num_lincenca|default_if_none:''}}
+        </div>
+    </div>
+
+    <div class="row my-1">
+        <div class="col-md-2 font-weight-bold">
+            Nº do Protocolo:
+        </div>
+        <div class="col-md">
+            {{empresa.num_protocolo|default_if_none:''}}
+        </div>
+
+        <div class="col-md-2 font-weight-bold">
+            Data de Validade:
+        </div>
+        <div class="col-md">
+            {{empresa.data_validade|default_if_none:''}}
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="row my-1">
+        <div class="col-md-2 font-weight-bold">
+            ART Nº:
+        </div>
+        <div class="col-md">
+            {{empresa.area_construida}}
+        </div>
+    </div>
+
+    <div class="row my-1">
+        <div class="col-md-2 font-weight-bold">
+            Descrição do Empreendimento:
+        </div>
+        <div class="col-md">
+            {{empresa.descricao_empreendimento}}
+        </div>
+    </div>
+
+    <div class="row my-1">
+        <div class="col-md-2 font-weight-bold">
+            Descrição do Processo Produtivo:
+        </div>
+        <div class="col-md">
+            {{empresa.descricao_processo_produtivo|default_if_none:''}}
+        </div>
+    </div>
+
+    <div class="row my-1">
+        <div class="col-md-2 font-weight-bold">
+            Metas de Minimização:
+        </div>
+        <div class="col-md">
+            {{empresa.metas_minimizacao|default_if_none:''}}
+        </div>
+    </div>
+
+    <div class="row my-1">
+        <div class="col-md-2 font-weight-bold">
+            Ações Preventivas:
+        </div>
+        <div class="col-md">
+            {{empresa.acoes_preventivas|default_if_none:''}}
+        </div>
+    </div>
+
+
+    <hr>
+
+    {% for resp in responsaveis %}
+
+    <div class="row my-1">
+        <div class="col-md-2 font-weight-bold">
+            Responsável Jurídico:
+        </div>
+        <div class="col-md">
+            {{resp.nome}}
+        </div>
+    </div>
+
+    <div class="row my-1">
+        <div class="col-md-2 font-weight-bold">
+            RG:
+        </div>
+        <div class="col-md">
+            {{resp.rg}}
+        </div>
+
+        <div class="col-md-2 font-weight-bold">
+            CPF:
+        </div>
+        <div class="col-md">
+            {{resp.cpf}}
+        </div>
+    </div>
+
+    <div class="row mt-1 mb-3">
+        <div class="col-md-2 font-weight-bold">
+            Email:
+        </div>
+        <div class="col-md">
+            {{resp.email}}
+        </div>
+
+        <div class="col-md-2 font-weight-bold">
+            Cargo:
+        </div>
+        <div class="col-md">
+            {{resp.cargo|default_if_none:''}}
+        </div>
+    </div>
+
+    {% empty %}
+    <p>Nenhum responsável jurídico foi informado.</p>
+    {% endfor %}
+
+
+    <!-- ======================================================================================= -->
+
+
+    <h4 class="border-bottom border-top p-1 text-center my-4 bg-light">Resíduos por Setor</h4>
+
+
+    {% for setor in setores %}
+
+    <div class="row my-2">
+        <div class="col-md">
+            <div class="table-responsive-md">
+
+                <table class="table table-striped table-sm shadow-sm">
+
+                    <thead>
+                        <tr class="font-weight-bold table-dark text-dark">
+                            <th class="font-125 border-0 text-center" colspan="100%">
+                                {{ setor.nome }}
+                            </th>
+                        </tr>
+
+                        <tr class="">
+                            <th class="border-0">Tipo do Resíduo</th>
+                            <th class="border-0">Resíduo</th>
+                            <th class="border-0">Especificação</th>
+                            <th class="border-0">Periodicidade de Coleta</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for residuo in residuos %}
+
+                        {% if residuo.setor == setor %}
+                        <tr>
+                            <td class="">{{ residuo.tipo_residuo }}</td>
+                            <td class="">{{ residuo.residuo }}</td>
+                            <td class="">{{ residuo.especificar_residuo }}</td>
+                            <td class="">{{ residuo.get_periodicidade_coleta_display }}</td>
+                        </tr>
+                        {% endif %}
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        </div>
+    </div>
+
+    {% empty %}
+    <p>Nenhum setor cadastrado!</p>
+    {% endfor %}
+
+
+    <!-- ======================================================================================= -->
+
+
+    <h4 class="border-bottom border-top p-1 text-center my-4 bg-light">Histórico de Movimentações</h4>
+
+
+    {% for situacao in situacoes %}
+
+    <div class="situacoes">
+
+
+        <div class="row">
+            <div class="col-md-1">
+                <b>Data/Hora:</b>
+            </div>
+            <div class="col-md">
+                {{situacao.data_movimentacao}}
+            </div>
+
+            <div class="col-md-1">
+                <b>Situação:</b>
+            </div>
+            <div class="col-md">
+                {{situacao.tipo_situacao.nome}}
+            </div>
+
+            <div class="col-md-1">
+                <b>Usuário:</b>
+            </div>
+            <div class="col-md">
+                {{ situacao.movimentado_por|formatarUsuario }}
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-1">
+                <b>Detalhes:</b>
+            </div>
+            <div class="col-md">
+                {{situacao.informacoes_complementares}}
+            </div>
+        </div>
+
+        <hr>
+
+        {% empty %}
+        <p>Este plano ainda não foi movimentado.</p>
+        {% endfor %}
+
+    </div>
+
+    <!-- ======================================================================================= -->
+
+
+    <div class="row my-3">
+        <div class="col-md text-center">
+
+            {% if situacao_atual %}
+
+                
+
+                {% if request.user|has_group:"Empresa" %}
+
+                    {% if situacao_atual.tipo_situacao.nome == "Em adequação" or situacao_atual.tipo_situacao.nome == "Andamento inicial" %}
+                    <button text="Tem certeza que deseja prosseguir para submeter seu Plano de Gerenciamento de Resíduos Sólidos
+                                para avaliação da Prefeitura?" link="{% url 'submeter-plano' %}" cor="btn-success"
+                        class="btn btn-success btn-lg btn-enviar my-1" title="Submeter Plano GRS">
+                        <i class="fa fa-share-square" aria-hidden="true"></i>
+                        Submeter Plano GRS
+                    </button>
+                    {% else %}
+                    <hr>
+                    <span class="">
+                        Seu Plano GRS atual encontra-se "<b>{{situacao_atual.tipo_situacao}}</b>". Você não pode realizar
+                        alterações.
+                    </span>
+
+                    {% endif %}
+
+                {% elif request.user|has_group:"Fiscal" or request.user|has_group:"Prefeitura" %}
+
+                    <h4 class="border-bottom border-top p-1 text-center mt-5 mb-3 bg-light">
+                        <i class="fa fa-cogs" aria-hidden="true"></i>
+                        Opções de Gerenciamento do Plano GRS
+                    </h4>
+
+                    {% if situacao_atual.tipo_situacao.nome == "Pendente" %}
+                    <button text="Tem certeza que deseja prosseguir para enviar este Plano de Gerenciamento de Resíduos Sólidos
+                                para análise?" link="{% url 'analisar-plano' pk %}" cor="btn-warning"
+                        class="btn btn-warning btn-enviar my-1" title="Enviar Plano GRS">
+                        <i class="fa fa-search" aria-hidden="true"></i>
+                        Enviar Plano GRS para Análise
+                    </button>
+                
+                    {% elif situacao_atual.tipo_situacao.nome == "Em análise" %}
+                    <button text="Este Plano de Gerenciamento de Resíduos precisa de Adequações." 
+                        link="{% url 'adequar-plano' pk %}" cor="btn-danger"
+                        class="btn btn-danger btn-enviar my-1">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        O Plano GRS precisa de Adequações
+                    </button>
+                    <button text="Você está de acordo que o Plano de Gerenciamento de Resíduos atual está completo."
+                        link="{% url 'aprovar-plano' pk %}" cor="btn-success"
+                        class="btn btn-success btn-enviar my-1">
+                        <i class="fa fa-check" aria-hidden="true"></i>
+                        Aprovar Plano GRS
+                    </button>
+                    {% elif situacao_atual.tipo_situacao.nome == "Aprovado" %}
+                    <button text="Você quer alterar a situação deste Plano GRS para Adequação?" link="{% url 'adequar-plano' pk %}"
+                        cor="btn-danger" class="btn btn-danger btn-enviar my-1">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        Movimentar o Plano GRS para Adequação
+                    </button>
+                    {% endif %}
+
+                {% endif %}
+
+            {% else %}
+            <span class="">
+                Este Plano GRS ainda não foi movimentado.
+            </span>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- ======================================================================================= -->
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="modal-enviar" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Movimentar Plano GRS</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p id="modal-body-p">
+
+                    </p>
+                    <p>
+                        Será necessário informar uma justificativa/informações complementares.
+                    </p>
+                    <!-- <small class="text-muted">Obs: Ao enviar, <b>NÃO</b> será permitido realizar alterações nos
+                        cadastros.</small> -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn " data-dismiss="modal">Cancelar</button>
+                    <a href="#" class="btn" id="btn-enviar-sim">
+                        <i class="fa fa-thumbs-o-up" aria-hidden="true"></i>
+                        Sim, quero prosseguir!
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+</div>
+{% endblock %}
+
+
+<!-- Bloco destinado aos scripts para cada página -->
+{% block scripts %}
+
+
+<script>
+    $(document).ready(function () {
+
+        $(".btn-enviar").click(function () {
+            var link = $(this).attr('link');
+            var text = $(this).attr('text');
+            var cor = $(this).attr('cor');
+
+            $("#btn-enviar-sim").attr('href', link);
+            $("#btn-enviar-sim").addClass(cor);
+            $("#modal-body-p").text(text);
+
+            $('#modal-enviar').modal('show');
+        });
+
+        $('#modal-enviar').on('hidden.bs.modal', function () {
+            $("#btn-enviar-sim").attr('href', "#");
+            $("#modal-body-p").text('');
+            $("#btn-enviar-sim").removeClass('btn-danger btn-success');
+        });
+
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,91 @@
+{% extends 'planogrs/base.html' %}
+
+{% load static %}
+{% load crispy_forms_tags %}
+
+
+
+<!-- Bloco de conteúdo -->
+{% block conteudo %}
+<div class="container py-5">
+
+    <h2 class="border-bottom">
+        {{ titulo }}
+    </h2>
+    <p class="text-muted">* Preencha todos os campos obrigatórios.</p>
+
+
+        <div class="row">
+            <div class="col-md">
+
+            <form method="post">
+                {% csrf_token %}
+
+                {{ form|crispy }}
+
+                <div class="">
+
+                    <button type="submit" class="btn {{ botao_submit_class }}">
+                        <i class="fa fa-check" aria-hidden="true"></i>
+                        {{ botao_submit }}
+                    </button>
+
+                    <a href="{% url urlcancelar %}" class="btn btn-secondary">
+                        <i class="fa fa-undo" aria-hidden="true"></i>
+                        Cancelar
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+    
+    
+</div>
+
+{% if situacao_atual.tipo_situacao.pode_alterar_cadastros == "n" and request.user.empresa.cnpj %}
+{% include "planogrs/modal.html" %}
+{% endif %}
+
+{% endblock %}
+
+
+{% block scripts %}
+<script src="{% static 'vendor/mask/jquery.mask.min.js' %}"></script>
+
+<script src="{% static 'js/viacep.js' %}"></script>
+
+<script>
+    $(document).ready(function () {
+
+        {% if situacao_atual.tipo_situacao.pode_alterar_cadastros == "n" and request.user.empresa.cnpj %}
+        $('#modal-informar-situacao').modal('show');
+        {% endif %}
+
+        // $('input[type=date]').mask('00/00/0000');
+        // $('.time').mask('00:00:00');
+        // $('input[type=datetime]').mask('00/00/0000 00:00:00');
+        
+        $('input[name*=cep]').mask('00.000-000');
+        $('input[name*=cpf]').mask('000.000.000-00');
+        $('input[name*=cnpj]').mask('00.000.000/0000-00');
+        
+        var SPMaskBehavior = function (val) {
+            return val.replace(/\D/g, '').length === 11 ? '(00) 0 0000-0000' : '(00) 0000-00009';
+        },
+        spOptions = {
+            onKeyPress: function (val, e, field, options) {
+                field.mask(SPMaskBehavior.apply({}, arguments), options);
+            }
+        };
+        
+        $('input[name*=telefone]').mask(SPMaskBehavior, spOptions);
+        $('input[name*=data_]').mask('00/00/0000');
+
+    });
+</script>
+
+{% endblock %}

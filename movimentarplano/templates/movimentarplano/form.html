@@ -1,0 +1,141 @@
+{% extends 'planogrs/base.html' %}
+
+{% load static %}
+{% load crispy_forms_tags %}
+
+
+
+<!-- Bloco de conteúdo -->
+{% block conteudo %}
+<div class="container py-5">
+
+    <h2 class="border-bottom">
+        {{ titulo }}
+    </h2>
+    <p class="text-muted">* Preencha todos os campos obrigatórios.</p>
+
+    <h5 class="border-bottom pb-2">Dados da Empresa</h5>
+
+    <div class="row">
+        <div class="col-md-2 font-weight-bold">
+            CNPJ:
+        </div>
+        <div class="col-md">
+            {{usuario.empresa.cnpj}}
+        </div>
+        <div class="col-md-2 font-weight-bold">
+            Situação atual:
+        </div>
+        <div class="col-md">
+            {{situacao_atual.tipo_situacao.nome}}
+            ({{situacao_atual.data_movimentacao|date:"d/m/Y H:i"}})
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-2 font-weight-bold">
+            Razão Social:
+        </div>
+        <div class="col-md">
+            {{usuario.empresa.razao_social}}
+        </div>
+
+        <div class="col-md-2 font-weight-bold">
+            Nome Fantasia:
+        </div>
+        <div class="col-md">
+            {{usuario.empresa.nome_fantasia}}
+        </div>
+    </div>
+
+    <h5 class="border-bottom pb-2 mt-5">Informações acerca da movimentação</h5>
+
+    <div class="row">
+        <div class="col-md">
+
+            {% if mostrarform %}
+
+            <form method="post">
+                {% csrf_token %}
+
+                {{ form|crispy }}
+
+                {% if informacoes_comp %}
+                <div class="alert alert-info mt-5">
+                    <strong>Atenção!</strong> Após alterar o Plano GRS para Adequação o Chamado #{{ chamado.pk }} será <strong>encerrado</strong>!
+                </div>
+                {% endif %}
+
+                <div class="">
+
+                    <button type="submit" class="btn {{ botao_submit_class }} my-1">
+                        <i class="fa fa-check" aria-hidden="true"></i>
+                        {{ botao_submit }}
+                    </button>
+
+                    <a href="{% url urlcancelar %}" class="btn btn-secondary my-1">
+                        <i class="fa fa-refresh" aria-hidden="true"></i>
+                        Cancelar
+                    </a>
+
+                </div>
+
+            </form>
+
+            {% else %}
+            <div class="alert alert-danger">
+                Você não pode fazer isso por aqui porque o plano desta empresa está <b>{{situacao_atual.tipo_situacao.nome}}</b>.
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+
+
+
+</div>
+
+{% if situacao_atual.tipo_situacao.pode_alterar_cadastros == "n" and request.user.empresa.cnpj %}
+{% include "planogrs/modal.html" %}
+{% endif %}
+
+{% endblock %}
+
+
+{% block scripts %}
+<script src="{% static 'vendor/mask/jquery.mask.min.js' %}"></script>
+
+<script src="{% static 'js/viacep.js' %}"></script>
+
+<script>
+    $(document).ready(function () {
+
+        {% if situacao_atual.tipo_situacao.pode_alterar_cadastros == "n" and request.user.empresa.cnpj %}
+        $('#modal-informar-situacao').modal('show');
+        {% endif %}
+
+        var text = $("#hint_id_informacoes_complementares").text();
+        $("#hint_id_informacoes_complementares").html(text.replace('0/250', '<span id="cont-char">0</span>/250'));
+
+        $("#id_informacoes_complementares").keyup(function() {
+             var tam = $(this).val().length;
+
+             if(tam > 250){
+                 alert("O tamanho máximo armazenado será 250.");
+             } else if(tam > 0){
+                 $("#cont-char").text(tam);
+             } else {
+                 $("#cont-char").text('0');
+             }
+             
+        });
+
+        {% if informacoes_comp %}
+        $("#id_informacoes_complementares").val("{{ informacoes_comp }}");
+        $("#cont-char").text($("#id_informacoes_complementares").val().length);
+        {% endif %}
+
+    });
+</script>
+
+{% endblock %}

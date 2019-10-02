@@ -1,0 +1,125 @@
+{% extends 'planogrs/base.html' %}
+
+{% load static %}
+{% load crispy_forms_tags %}
+{% load my_filters %}
+
+<!-- Bloco destinado aos scripts para cada página -->
+{% block styles %}
+<link rel="stylesheet" href="{% static 'vendor/datatables/css/dataTables.bootstrap4.min.css' %}">
+<link rel="stylesheet" href="{% static 'vendor/datatables/css/fixedHeader.bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'vendor/datatables/css/responsive.bootstrap.min.css' %}">
+{% endblock %}
+
+<!-- Bloco de conteúdo -->
+{% block conteudo %}
+<div class="container-fluid py-5 px-3">
+
+    <h2 class="border-bottom px-3 pb-2 mb-5">
+        {{titulo}}
+    </h2>
+
+
+    <div class="row my-3">
+        <div class="col-md">
+
+            <table class="table table-striped nowrap" style="width:100%" id="tabela-listar">
+
+                <thead>
+                    <tr>
+                        <!-- Alterar o título das colunas -->
+                        <th>Usuário</th>
+                        <th>Data de Movimentação</th>
+                        <th>Informações Complementares</th>
+                        <th>Tipo de Situação</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for obj in object_list  %}
+                    <tr>
+                        <!-- Alterar os campos -->
+                        <td>
+                            {% if obj.movimentado_por.first_name %}
+                            {{ obj.movimentado_por.first_name }} (Cód. {{obj.movimentado_por.pk}})
+                            {% elif obj.movimentado_por.empresa %}
+                            {{ obj.movimentado_por.empresa.cnpj }}
+                            {% else %}
+                            {{ obj.movimentado_por }}
+                            {% endif %}
+                        </td>
+                        <td>{{ obj.data_movimentacao }}</td>
+                        <td>{{ obj.informacoes_complementares }}</td>
+                        <td>{{ obj.tipo_situacao }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+
+
+        </div>
+    </div>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="modal-excluir" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Verificação de exclusão</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="modal-text-registro"></div>
+                    <br>
+                    <p>
+                        <b>Deseja ir para a página de exclusão?</b>
+                    </p>
+                    <small class="text-muted">Obs: O registro ainda não será excluído após esta confirmação.</small>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn " data-dismiss="modal">Cancelar</button>
+                    <a href="#" class="btn btn-danger" id="btn-excluir-sim">Sim, continuar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+</div>
+{% endblock %}
+
+
+<!-- Bloco destinado aos scripts para cada página -->
+{% block scripts %}
+<script src="{% static 'vendor/datatables/js/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'vendor/datatables/js/dataTables.bootstrap4.min.js' %}"></script>
+
+<script src="{% static 'vendor/datatables/js/dataTables.fixedHeader.min.js' %}"></script>
+<script src="{% static 'vendor/datatables/js/dataTables.responsive.min.js' %}"></script>
+<script src="{% static 'vendor/datatables/js/responsive.bootstrap.min.js' %}"></script>
+
+<script src="{% static 'js/dataTables_ptbr.js' %}"></script>
+
+<script>
+    $(document).ready(function () {
+
+        $(".btn-excluir").click(function () {
+            $("#btn-excluir-sim").attr('href', $(this).attr('link'));
+            $("#modal-text-registro").text($(this).closest("tr").text());
+
+        });
+
+        $('#modal-excluir').on('hidden.bs.modal', function () {
+            $("#btn-excluir-sim").attr('href', "#");
+            $("#modal-text-registro").text('');
+        });
+
+    });
+</script>
+{% endblock %}
